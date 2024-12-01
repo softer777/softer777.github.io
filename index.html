@@ -374,7 +374,12 @@
             1. Выпало число в игре 7 - Нажимаете на сайте 7<br>
             2. Ниже вам предложит число, которое может выпасть<br>
             3. Ваш выбор ставить на него, или нет. Также может быть много чисел и число с x2, x3 которое выпадало чаще всех после числа 7<br>
-            4. Число которое выпало после 7, например 13. Вам нужно нажать 13 на сайте, тем самым вы запишете связку чисел 7 -> 13 и вам будет при выпадании 7 числа предлагать поставить число 13
+            4. Число которое выпало после 7, например 13. Вам нужно нажать 13 на сайте, тем самым вы запишете связку чисел 7 -> 13 и вам будет при выпадании 7 числа предлагать поставить число 13<br><br>
+
+            Сколько связок может хранить браузер и пропадают ли они при обновлении страницы?<br>
+            Ответ: Связки не пропадают при обновлении страницы и при использовании в браузере Google записываться может до 10% от занятого места на диске где находиться браузер. Используемая технология IndexedDB
+
+
         </p>
     </div>
     <div id="rouletteNumbers" class="roulette-table"></div>
@@ -382,6 +387,24 @@
     <div id="output"></div>
     <div id="history"></div>
     <script>
+        // Открытие базы данных
+        let db;
+        let request = indexedDB.open("rouletteDB", 1);
+
+        request.onupgradeneeded = function(event) {
+            db = event.target.result;
+            if (!db.objectStoreNames.contains("pairCounts")) {
+                db.createObjectStore("pairCounts", { keyPath: "table" });
+            }
+        };
+
+        request.onerror = function(event) {
+            console.error("Ошибка при открытии базы данных: ", event.target.error);
+        };
+
+        request.onsuccess = function(event) {
+            db = event.target.result;
+        };
 
         // Получаем все кнопки
         const buttons = document.querySelectorAll('.chooseTable');
@@ -394,18 +417,18 @@
                 
                 // Добавляем активный класс к выбранной кнопке
                 button.classList.add('active');
-                
             });
         });
+
         const explainButton = document.getElementById('explainButton');
         const explanation = document.getElementById('explanation');
-        const explanationBlock = document.querySelector('.explanation');
-
+        
         // Обработчик клика на кнопку "Пояснить"
         explainButton.addEventListener('click', () => {
-            explanation.classList.toggle('show'); // Показать/скрыть пояснение
+            explanation.classList.toggle('show');
             explainButton.classList.toggle('active');
         });
+
         const colors = {
             0: 'green',
             1: 'red', 2: 'black', 3: 'red', 4: 'black', 5: 'red', 6: 'black', 7: 'red', 8: 'black', 9: 'red',
@@ -434,194 +457,191 @@
 
         const rouletteNumbers = document.getElementById('rouletteNumbers');
         let prevNumber = null;
-        let pairCounts = JSON.parse(localStorage.getItem('pairCounts')) || {};
-        // Пример существующего кода для столов
-const saveButton1 = document.getElementById('saveButton1');
-const saveButton2 = document.getElementById('saveButton2');
-const saveButton3 = document.getElementById('saveButton3');
-const saveButton4 = document.getElementById('saveButton4');
 
-const chooseTable1 = document.getElementById('chooseTable1');
-const chooseTable2 = document.getElementById('chooseTable2');
-const chooseTable3 = document.getElementById('chooseTable3');
-const chooseTable4 = document.getElementById('chooseTable4');
+        let currentTable = 1; // Начинаем с первого стола
+        let currentPairCounts = {};
 
-let currentTable = 1; // Начинаем с первого стола по умолчанию
-let currentPairCounts = JSON.parse(localStorage.getItem('pairCounts1')) || {}; // Для стола 1
-
-// Функция для обновления истории
-function updateHistory() {
-    const historyDiv = document.getElementById('history');
-    historyDiv.innerHTML = ''; // Очистить историю
-
-    for (const pair in currentPairCounts) {
-        const pairData = JSON.parse(pair);
-        const count = currentPairCounts[pair];
-    }
-}
-
-// Обработчики выбора стола
-chooseTable1.addEventListener('click', () => {
-    currentTable = 1;
-    currentPairCounts = JSON.parse(localStorage.getItem('pairCounts1')) || {}; // Загружаем данные для стола 1
-    updateHistory();
-});
-
-chooseTable2.addEventListener('click', () => {
-    currentTable = 2;
-    currentPairCounts = JSON.parse(localStorage.getItem('pairCounts2')) || {}; // Загружаем данные для стола 2
-    updateHistory();
-});
-
-chooseTable3.addEventListener('click', () => {
-    currentTable = 3;
-    currentPairCounts = JSON.parse(localStorage.getItem('pairCounts3')) || {}; // Загружаем данные для стола 3
-    updateHistory();
-});
-
-chooseTable4.addEventListener('click', () => {
-    currentTable = 4;
-    currentPairCounts = JSON.parse(localStorage.getItem('pairCounts4')) || {}; // Загружаем данные для стола 4
-    updateHistory();
-});
-
-// Функция для отслеживания чисел и их комбинаций
-function trackNumberPairs(num) {
-    let output = document.getElementById('output');
-    output.innerHTML = ''; // Очистить вывод
-
-    if (prevNumber !== null) {
-        let pair = [prevNumber, num];
-
-        // Проверка и добавление комбинации в текущую коллекцию
-        if (currentPairCounts[JSON.stringify(pair)]) {
-            currentPairCounts[JSON.stringify(pair)]++;
-        } else {
-            currentPairCounts[JSON.stringify(pair)] = 1;
+        // Функция для сохранения данных в IndexedDB
+        function saveToIndexedDB(table, data) {
+            const transaction = db.transaction(["pairCounts"], "readwrite");
+            const store = transaction.objectStore("pairCounts");
+            const pairData = { table: table, counts: data };
+            store.put(pairData); // Сохраняем или обновляем данные
         }
 
-        // Сохранение в Local Storage для текущего стола
-        localStorage.setItem(`pairCounts${currentTable}`, JSON.stringify(currentPairCounts));
-    }
+        // Функция для загрузки данных из IndexedDB
+        function loadFromIndexedDB(table, callback) {
+            const transaction = db.transaction(["pairCounts"], "readonly");
+            const store = transaction.objectStore("pairCounts");
+            const request = store.get(table);
 
-    let found = false;
-    for (let key in currentPairCounts) {
-        let pair = JSON.parse(key);
-        if (pair[0] === num) {
-            const nextNumber = pair[1];
-            const button = createButton(nextNumber);
-            output.innerHTML += `После числа ${pair[0]} падает ${button.outerHTML}`;
+            request.onsuccess = function(event) {
+                const result = event.target.result;
+                if (result) {
+                    callback(result.counts);
+                } else {
+                    callback(null); // Данные не найдены
+                }
+            };
 
-            if (currentPairCounts[key] > 1) {
-                const xButton = createXButton(currentPairCounts[key]);
-                output.innerHTML += xButton.outerHTML;
+            request.onerror = function(event) {
+                console.error("Ошибка при загрузке данных: ", event.target.error);
+            };
+        }
+
+        // Функция для обновления истории
+        function updateHistory() {
+            const historyDiv = document.getElementById('history');
+            historyDiv.innerHTML = ''; // Очистить историю
+
+            for (const pair in currentPairCounts) {
+                const pairData = JSON.parse(pair);
+                const count = currentPairCounts[pair];
+            }
+        }
+
+        // Обработчики выбора стола
+        document.getElementById('chooseTable1').addEventListener('click', () => {
+            currentTable = 1;
+            loadFromIndexedDB(currentTable, function(data) {
+                currentPairCounts = data || {};
+                updateHistory();
+            });
+        });
+
+        document.getElementById('chooseTable2').addEventListener('click', () => {
+            currentTable = 2;
+            loadFromIndexedDB(currentTable, function(data) {
+                currentPairCounts = data || {};
+                updateHistory();
+            });
+        });
+
+        document.getElementById('chooseTable3').addEventListener('click', () => {
+            currentTable = 3;
+            loadFromIndexedDB(currentTable, function(data) {
+                currentPairCounts = data || {};
+                updateHistory();
+            });
+        });
+
+        document.getElementById('chooseTable4').addEventListener('click', () => {
+            currentTable = 4;
+            loadFromIndexedDB(currentTable, function(data) {
+                currentPairCounts = data || {};
+                updateHistory();
+            });
+        });
+
+        // Функция для отслеживания чисел и их комбинаций
+        function trackNumberPairs(num) {
+            let output = document.getElementById('output');
+            output.innerHTML = ''; // Очистить вывод
+
+            if (prevNumber !== null) {
+                let pair = [prevNumber, num];
+
+                // Проверка и добавление комбинации в текущую коллекцию
+                if (currentPairCounts[JSON.stringify(pair)]) {
+                    currentPairCounts[JSON.stringify(pair)]++;
+                } else {
+                    currentPairCounts[JSON.stringify(pair)] = 1;
+                }
+
+                // Сохранение в IndexedDB для текущего стола
+                saveToIndexedDB(currentTable, currentPairCounts);
             }
 
-            output.innerHTML += '<br>';
+            let found = false;
+            for (let key in currentPairCounts) {
+                let pair = JSON.parse(key);
+                if (pair[0] === num) {
+                    const nextNumber = pair[1];
+                    const button = createButton(nextNumber);
+                    output.innerHTML += `После числа ${pair[0]} падает ${button.outerHTML}`;
 
-            found = true;
+                    if (currentPairCounts[key] > 1) {
+                        const xButton = createXButton(currentPairCounts[key]);
+                        output.innerHTML += xButton.outerHTML;
+                    }
+
+                    output.innerHTML += '<br>';
+
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                output.innerHTML += `После числа ${num} нет связки.<br>`;
+            }
+
+            prevNumber = num;
+            updateHistory(); // Обновить историю
         }
-    }
 
-    if (!found) {
-        output.innerHTML += `После числа ${num} нет связки.<br>`;
-    }
+        // Функция для создания кнопки с числом
+        function createButton(number) {
+            const color = colors[number];
+            const button = document.createElement('span');
+            button.classList.add('output-number', color);
+            button.textContent = number === '00' ? '00' : number;
+            return button;
+        }
 
-    prevNumber = num;
-    updateHistory(); // Обновить историю
-}
+        // Функция для создания кнопки xN
+        function createXButton(count) {
+            const button = document.createElement('span');
+            button.classList.add('x2-button');
+            button.textContent = `x${count}`;
+            return button;
+        }
 
-// Функция для создания кнопки с числом
-function createButton(number) {
-    const color = colors[number];
-    const button = document.createElement('span');
-    button.classList.add('output-number', color);
-    button.textContent = number === '00' ? '00' : number;
-    return button;
-}
+        // Добавление обработчиков для номеров рулетки (по аналогии с твоим исходным кодом)
+        columns.forEach((column) => {
+            let columnDiv = document.createElement('div');
+            columnDiv.classList.add('roulette-column');
 
-// Функция для создания кнопки xN
-function createXButton(count) {
-    const button = document.createElement('span');
-    button.classList.add('x2-button');
-    button.textContent = `x${count}`;
-    return button;
-}
+            column.reverse(); // Инвертируем порядок чисел
 
-// Добавление обработчиков для номеров рулетки (по аналогии с вашим исходным кодом)
-columns.forEach((column) => {
-    let columnDiv = document.createElement('div');
-    columnDiv.classList.add('roulette-column');
+            column.forEach((number) => {
+                let button = document.createElement('div');
+                let color = colors[number];
+                button.classList.add('number', color);
+                button.textContent = number === '00' ? '00' : number;
+                button.onclick = () => trackNumberPairs(number);
+                columnDiv.appendChild(button);
+            });
 
-    column.reverse(); // Инвертируем порядок чисел
+            rouletteNumbers.appendChild(columnDiv);
+        });
 
-    column.forEach((number) => {
-        let button = document.createElement('div');
-        let color = colors[number];
-        button.classList.add('number', color);
-        button.textContent = number === '00' ? '00' : number;
-        button.onclick = () => trackNumberPairs(number);
-        columnDiv.appendChild(button);
-    });
+        // Обработчики сброса данных для каждого стола
+        document.getElementById('resetButton1').addEventListener('click', () => {
+            saveToIndexedDB(1, {}); // Очистить данные для стола 1
+            currentPairCounts = {}; // Очистить локальную переменную
+            updateHistory(); // Обновить отображение истории
+        });
 
-    rouletteNumbers.appendChild(columnDiv);
-});
+        document.getElementById('resetButton2').addEventListener('click', () => {
+            saveToIndexedDB(2, {}); // Очистить данные для стола 2
+            currentPairCounts = {}; // Очистить локальную переменную
+            updateHistory(); // Обновить отображение истории
+        });
 
+        document.getElementById('resetButton3').addEventListener('click', () => {
+            saveToIndexedDB(3, {}); // Очистить данные для стола 3
+            currentPairCounts = {}; // Очистить локальную переменную
+            updateHistory(); // Обновить отображение истории
+        });
 
+        document.getElementById('resetButton4').addEventListener('click', () => {
+            saveToIndexedDB(4, {}); // Очистить данные для стола 4
+            currentPairCounts = {}; // Очистить локальную переменную
+            updateHistory(); // Обновить отображение истории
+        });
 
-// Обработчики сброса данных для каждого стола
-document.getElementById('resetButton1').addEventListener('click', () => {
-    localStorage.removeItem('pairCounts1'); // Очистить Local Storage для стола 1
-    currentPairCounts = {}; // Очистить локальную переменную
-    updateHistory(); // Обновить отображение истории
-});
-
-document.getElementById('resetButton2').addEventListener('click', () => {
-    localStorage.removeItem('pairCounts2'); // Очистить Local Storage для стола 2
-    currentPairCounts = {}; // Очистить локальную переменную
-    updateHistory(); // Обновить отображение истории
-});
-
-document.getElementById('resetButton3').addEventListener('click', () => {
-    localStorage.removeItem('pairCounts3'); // Очистить Local Storage для стола 3
-    currentPairCounts = {}; // Очистить локальную переменную
-    updateHistory(); // Обновить отображение истории
-});
-
-document.getElementById('resetButton4').addEventListener('click', () => {
-    localStorage.removeItem('pairCounts4'); // Очистить Local Storage для стола 4
-    currentPairCounts = {}; // Очистить локальную переменную
-    updateHistory(); // Обновить отображение истории
-});
-
-// Обработчики выбора стола
-chooseTable1.addEventListener('click', () => {
-    currentTable = 1;
-    currentPairCounts = JSON.parse(localStorage.getItem('pairCounts1')) || {}; // Загружаем данные для стола 1
-    updateHistory();
-});
-
-chooseTable2.addEventListener('click', () => {
-    currentTable = 2;
-    currentPairCounts = JSON.parse(localStorage.getItem('pairCounts2')) || {}; // Загружаем данные для стола 2
-    updateHistory();
-});
-
-chooseTable3.addEventListener('click', () => {
-    currentTable = 3;
-    currentPairCounts = JSON.parse(localStorage.getItem('pairCounts3')) || {}; // Загружаем данные для стола 3
-    updateHistory();
-});
-
-chooseTable4.addEventListener('click', () => {
-    currentTable = 4;
-    currentPairCounts = JSON.parse(localStorage.getItem('pairCounts4')) || {}; // Загружаем данные для стола 4
-    updateHistory();
-});
-
-
-// Загрузка истории для выбранного стола при старте
-updateHistory();
+        // Загрузка истории для выбранного стола при старте
+        updateHistory();
     </script>
 
 </body>
