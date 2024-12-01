@@ -334,6 +334,51 @@
 .resetButton:hover {
     background-color: #7f8c8d;
 }
+.pair-count-display {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #4CAF50; /* Зеленый фон */
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    animation: glowBlue 1.5s infinite alternate; /* Добавление анимации свечения */
+}
+
+@keyframes glowRed {
+    0% {
+        box-shadow: 0 0 20px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000; /* Ярко-красный */
+        background-color: #ff0000; /* Ярко-красный */
+    }
+    50% {
+        box-shadow: 0 0 30px #ff3333, 0 0 30px #ff3333, 0 0 40px #ff3333; /* Ярко-красный с оттенком */
+        background-color: #ff3333; /* Ярко-красный с оттенком */
+    }
+    100% {
+        box-shadow: 0 0 40px #ff0000, 0 0 40px #ff0000, 0 0 50px #ff0000; /* Чисто красный */
+        background-color: #ff0000; /* Чисто красный */
+    }
+}
+
+.pair-count-display {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #ff4d4d; /* Начальный ярко-красный */
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    animation: glowRed 1.5s infinite alternate; /* Анимация красного свечения */
+}
+
+#pairCountDisplay {
+    position: fixed; /* Фиксируем позицию */
+    top: 630px; /* Отступ сверху */
+    left: 950px; /* Отступ слева */
+    z-index: 1000; /* Обеспечиваем, чтобы элемент был поверх других */
+    display: flex; /* Включаем флекс для выравнивания */
+    justify-content: center;
+    align-items: center;
+}
 
     </style>
 </head>
@@ -383,6 +428,7 @@
         </p>
     </div>
     <div id="rouletteNumbers" class="roulette-table"></div>
+    <div id="pairCountDisplay"></div>
 
     <div id="output"></div>
     <div id="history"></div>
@@ -489,15 +535,20 @@
             };
         }
 
-        // Функция для обновления истории
+        // Функция для обновления истории и подсчета связок
+        // Функция для обновления истории и подсчета связок
         function updateHistory() {
-            const historyDiv = document.getElementById('history');
-            historyDiv.innerHTML = ''; // Очистить историю
+            const pairCountDisplay = document.getElementById('pairCountDisplay');
+            const totalPairCount = Object.values(currentPairCounts).reduce((sum, count) => sum + count, 0);
 
-            for (const pair in currentPairCounts) {
-                const pairData = JSON.parse(pair);
-                const count = currentPairCounts[pair];
-            }
+            // Создаем элемент с количеством связок
+            const pairCountElement = document.createElement('span');
+            pairCountElement.classList.add('pair-count-display');  // Применяем стиль
+            pairCountElement.textContent = `Количество связок загружено ${totalPairCount}`;
+
+            // Обновляем отображение в pairCountDisplay
+            pairCountDisplay.innerHTML = '';  // Очищаем текущий контент
+            pairCountDisplay.appendChild(pairCountElement);  // Добавляем новый элемент с подсчитанным количеством
         }
 
         // Обработчики выбора стола
