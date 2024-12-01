@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&display=swap" rel="stylesheet">
     <title>Рулетка</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #2c3e50;
+            font-family: 'Exo 2', sans-serif;
+            background-color: #1d1d1d;
             color: white;
             display: flex;
             justify-content: center;
@@ -42,23 +44,39 @@
             transition: background-color 0.2s ease;
         }
 
-        .roulette-table .number:hover {
-            background-color: #34495e;
-        }
+        
 
+        /* Стиль для кнопок */
         .roulette-table .green {
             background-color: #2ecc71;
             color: white;
+            transition: box-shadow 0.3s ease; /* Плавный переход для свечения */
         }
 
         .roulette-table .red {
             background-color: red;
             color: white;
+            transition: box-shadow 0.3s ease; /* Плавный переход для свечения */
         }
 
         .roulette-table .black {
             background-color: black;
             color: white;
+            transition: box-shadow 0.3s ease; /* Плавный переход для свечения */
+        }
+
+        /* Эффект при наведении: добавляем только свечение */
+
+        .roulette-table .green:hover {
+            box-shadow: 0 0 15px rgba(46, 204, 113, 1), 0 0 25px rgba(46, 204, 113, 0.7); /* Свечение зеленым при наведении */
+        }
+
+        .roulette-table .red:hover {
+            box-shadow: 0 0 15px rgba(231, 76, 60, 1), 0 0 25px rgba(231, 76, 60, 0.7); /* Свечение красным при наведении */
+        }
+
+        .roulette-table .black:hover {
+            box-shadow: 0 0 15px rgba(0, 0, 0, 1), 0 0 25px rgba(0, 0, 0, 0.7); /* Свечение черным при наведении */
         }
 
         .header {
@@ -67,10 +85,24 @@
             font-size: 32px;
             font-weight: bold;
         }
+        /* Контейнер для вывода информации */
+        #output-container {
+            position: relative; /* Необходимо для правильного позиционирования текста */
+            margin-top: 200px;
+            width: 100%;
+        }
 
         #output {
-            margin-top: 20px;
+            position: absolute; /* Это фиксирует текст на месте, не влияя на положение других элементов */
+            top: 830px;
+            left: 50%;
+            transform: translateX(-50%); /* Центрирует надпись */
             font-size: 18px;
+            text-align: center;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
         }
 
         #history {
@@ -172,60 +204,83 @@
             animation: none; /* Останавливаем анимацию при наведении */
             box-shadow: 0 0 15px #f39c12, 0 0 25px #f39c12, 0 0 35px #f39c12; /* Усиленный эффект свечения при hover */
         }
-        /* Стиль для кнопки "Пояснить" */
-        #explainButton {
-            background-color: #e74c3c; /* Красный цвет */
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+/* Стиль для кнопки "Пояснить" */
+#explainButton {
+    background-color: #e74c3c; /* Красный цвет */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Плавное изменение цвета и тени */
+}
 
-        #explainButton:hover {
-            background-color: #c0392b; /* Темно-красный при наведении */
-        }
+/* Эффект свечения при наведении */
+#explainButton:hover {
+    background-color: #c0392b; /* Темно-красный при наведении */
+    box-shadow: 0 0 10px 5px rgba(231, 76, 60, 0.7); /* Эффект свечения при наведении */
+}
 
-        /* Стиль для блока с пояснением */
-        .explanation {
-            background-color: #34495e;
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 30px auto; /* Отступы сверху и снизу */
-            width: 70%; /* Меньше ширина, чтобы карточка не была слишком широкой */
-            display: none;
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-            max-height: 0;
-            overflow: hidden;
-        }
+/* Эффект свечения при нажатии */
+#explainButton:active {
+    background-color: #c0392b; /* Темно-красный при нажатии */
+    box-shadow: 0 0 15px 5px rgba(231, 76, 60, 1); /* Более яркое свечение при нажатии */
+}
 
-        /* Класс для отображения блока с пояснением */
-        .explanation.show {
-            display: block;
-            max-height: 500px; /* Можете регулировать размер */
-            padding: 20px;
-        }
+/* Добавленный стиль для кнопки, когда блок с пояснением открыт */
+#explainButton.active {
+    background-color: #c0392b; /* Оставляем темно-красный фон */
+    box-shadow: 0 0 15px 5px rgba(231, 76, 60, 1); /* Яркое свечение */
+}
 
-        /* Общий стиль для текста внутри пояснения */
-        .explanation p {
-            line-height: 1.5;
-        }
+/* Стиль для блока с пояснением */
+.explanation {
+    background-color: #34495e;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 70%;
+    position: absolute; /* Блок позиционируется относительно ближайшего родителя с position: relative */
+    top: 60%; /* Позиционирование по вертикали (выставляется на середину страницы) */
+    left: 50%; /* Позиционирование по горизонтали */
+    transform: translate(-50%, -50%); /* Центрируем блок относительно его размеров */
+    opacity: 0;
+    visibility: hidden; /* Элемент скрыт и не занимает места */
+    z-index: 9999; /* Устанавливаем высокий z-index, чтобы он был поверх всех других элементов */
+    transition: opacity 0.5s ease, transform 0.5s ease, visibility 0s 0.5s; /* Плавное изменение opacity и transform */
+}
+
+/* Класс для отображения блока с пояснением */
+.explanation.show {
+    opacity: 1;
+    visibility: visible; /* Блок становится видимым */
+    transform: translate(-50%, -50%) scale(1); /* Блок появляется в центре */
+    transition: opacity 0.5s ease, transform 0.5s ease; /* Убираем задержку для visibility */
+}
+
+/* Общий стиль для текста внутри пояснения */
+.explanation p {
+    line-height: 1.5;
+}
 
 #button-container {
     display: flex;
     flex-direction: column;  /* Кнопки будут выстраиваться по вертикали */
     position: absolute;      /* Позиционирование относительно окна */
-    top: 10px;               /* Отступ сверху */
-    left: 10px;              /* Отступ слева */
+    top: 100px;               /* Отступ сверху */
+    left: 100px;              /* Отступ слева */
+}
+
+.button-group {
+    display: flex;           /* Горизонтальное выравнивание кнопок */
+    margin-bottom: 10px;      /* Отступ между строками */
 }
 
 .chooseTable {
     padding: 15px 25px;
-    margin: 10px;
-    border: none;  /* Убираем стандартную обводку кнопки */
+    margin-right: 10px;       /* Отступ между кнопками в группе */
+    border: none;
     background-color: #3498db;
     color: white;
     font-size: 16px;
@@ -233,6 +288,7 @@
     transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
     border-radius: 5px;
     position: relative;
+    flex: 1;  /* Кнопка "Стол" занимает всю доступную ширину */
 }
 
 .chooseTable:hover {
@@ -243,37 +299,67 @@
 .chooseTable.active {
     background-color: #e74c3c;
     transform: scale(1.1);
-    box-shadow: 0 0 10px 5px rgba(231, 76, 60, 0.7);  /* Свечение вокруг кнопки */
+    box-shadow: 0 0 10px 5px rgba(231, 76, 60, 0.7);
 }
 
 .chooseTable::after {
-    content: ''; /* Убираем псевдо-элемент, который добавлял обводку */
+    content: '';
     position: absolute;
     top: -5px;
     left: -5px;
     right: -5px;
     bottom: -5px;
-    border: none;  /* Убираем рамку */
+    border: none;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
 
 .chooseTable.active::after {
-    opacity: 0;  /* Рамка не появляется */
+    opacity: 0;
 }
+
+.resetButton {
+    padding: 10px 15px;
+    margin-left: 10px;   /* Отступ от кнопки "Стол" */
+    border: none;
+    background-color: #000fff;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    flex-shrink: 0;   /* Кнопка "Сбросить записи" не будет сжиматься */
+    width: 100px;     /* Устанавливаем фиксированную ширину */
+}
+
+.resetButton:hover {
+    background-color: #7f8c8d;
+}
+
     </style>
 </head>
 <body>
     <div id="button-container">
-        <button id="chooseTable1" class="chooseTable">Выбрать стол 1</button>
-        <button id="chooseTable2" class="chooseTable">Выбрать стол 2</button>
-        <button id="chooseTable3" class="chooseTable">Выбрать стол 3</button>
-        <button id="chooseTable4" class="chooseTable">Выбрать стол 4</button>
+    <div class="button-group">
+        <button id="chooseTable1" class="chooseTable">Стол 5 <i class="fa-regular fa-compass"></i></button>
+        <button id="resetButton1" class="resetButton">Сбросить запись</button>
     </div>
+    <div class="button-group">
+        <button id="chooseTable2" class="chooseTable">Стол 5 <i class="fa-regular fa-compass"></i></button>
+        <button id="resetButton2" class="resetButton">Сбросить запись</button>
+    </div>
+    <div class="button-group">
+        <button id="chooseTable3" class="chooseTable">Стол 100 <i class="fa-regular fa-compass"></i></button>
+        <button id="resetButton3" class="resetButton">Сбросить запись</button>
+    </div>
+    <div class="button-group">
+        <button id="chooseTable4" class="chooseTable">Стол 250 <i class="fa-regular fa-compass"></i></button>
+        <button id="resetButton4" class="resetButton">Сбросить запись</button>
+    </div>
+</div>
 
       <!-- Шапка страницы -->
     <div class="header">
-        <h1>Casino Helper   <button id="explainButton">FAQ</button></h1>
+        <h1>Casino Helper   <button id="explainButton">Помощь</button></h1>
     </div>
 
     <!-- Блок с пояснением -->
@@ -283,37 +369,42 @@
             связки чисел, выпавших на рулетке. После каждого числа отображается следующее,
             которое выпало в предыдущий раз, и если такая связка повторяется, будет показан
             значок с числом повторений. Это поможет вам отслеживать тренды и делать более
-            обоснованные ставки. Удачи!
+            обоснованные ставки. Удачи!<br><br>
+            Как пользоваться:<br>
+            1. Выпало число в игре 7 - Нажимаете на сайте 7<br>
+            2. Ниже вам предложит число, которое может выпасть<br>
+            3. Ваш выбор ставить на него, или нет. Также может быть много чисел и число с x2, x3 которое выпадало чаще всех после числа 7<br>
+            4. Число которое выпало после 7, например 13. Вам нужно нажать 13 на сайте, тем самым вы запишете связку чисел 7 -> 13 и вам будет при выпадании 7 числа предлагать поставить число 13
         </p>
     </div>
     <div id="rouletteNumbers" class="roulette-table"></div>
 
     <div id="output"></div>
     <div id="history"></div>
-
-    <button id="resetButton">Сбросить записи</button>
-
     <script>
-        // Получаем все кнопки
-const buttons = document.querySelectorAll('.chooseTable');
 
-// Добавляем обработчик событий для каждой кнопки
-buttons.forEach(button => {
-    button.addEventListener('click', () => {
-        // Убираем активный класс у всех кнопок
-        buttons.forEach(btn => btn.classList.remove('active'));
-        
-        // Добавляем активный класс к выбранной кнопке
-        button.classList.add('active');
-        
-    });
-});
+        // Получаем все кнопки
+        const buttons = document.querySelectorAll('.chooseTable');
+
+        // Добавляем обработчик событий для каждой кнопки
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Убираем активный класс у всех кнопок
+                buttons.forEach(btn => btn.classList.remove('active'));
+                
+                // Добавляем активный класс к выбранной кнопке
+                button.classList.add('active');
+                
+            });
+        });
         const explainButton = document.getElementById('explainButton');
         const explanation = document.getElementById('explanation');
+        const explanationBlock = document.querySelector('.explanation');
 
         // Обработчик клика на кнопку "Пояснить"
         explainButton.addEventListener('click', () => {
             explanation.classList.toggle('show'); // Показать/скрыть пояснение
+            explainButton.classList.toggle('active');
         });
         const colors = {
             0: 'green',
@@ -476,12 +567,58 @@ columns.forEach((column) => {
     rouletteNumbers.appendChild(columnDiv);
 });
 
-// Обработчик сброса данных
-document.getElementById('resetButton').addEventListener('click', () => {
-    localStorage.removeItem(`pairCounts${currentTable}`); // Очистить Local Storage для текущего стола
+
+
+// Обработчики сброса данных для каждого стола
+document.getElementById('resetButton1').addEventListener('click', () => {
+    localStorage.removeItem('pairCounts1'); // Очистить Local Storage для стола 1
     currentPairCounts = {}; // Очистить локальную переменную
     updateHistory(); // Обновить отображение истории
 });
+
+document.getElementById('resetButton2').addEventListener('click', () => {
+    localStorage.removeItem('pairCounts2'); // Очистить Local Storage для стола 2
+    currentPairCounts = {}; // Очистить локальную переменную
+    updateHistory(); // Обновить отображение истории
+});
+
+document.getElementById('resetButton3').addEventListener('click', () => {
+    localStorage.removeItem('pairCounts3'); // Очистить Local Storage для стола 3
+    currentPairCounts = {}; // Очистить локальную переменную
+    updateHistory(); // Обновить отображение истории
+});
+
+document.getElementById('resetButton4').addEventListener('click', () => {
+    localStorage.removeItem('pairCounts4'); // Очистить Local Storage для стола 4
+    currentPairCounts = {}; // Очистить локальную переменную
+    updateHistory(); // Обновить отображение истории
+});
+
+// Обработчики выбора стола
+chooseTable1.addEventListener('click', () => {
+    currentTable = 1;
+    currentPairCounts = JSON.parse(localStorage.getItem('pairCounts1')) || {}; // Загружаем данные для стола 1
+    updateHistory();
+});
+
+chooseTable2.addEventListener('click', () => {
+    currentTable = 2;
+    currentPairCounts = JSON.parse(localStorage.getItem('pairCounts2')) || {}; // Загружаем данные для стола 2
+    updateHistory();
+});
+
+chooseTable3.addEventListener('click', () => {
+    currentTable = 3;
+    currentPairCounts = JSON.parse(localStorage.getItem('pairCounts3')) || {}; // Загружаем данные для стола 3
+    updateHistory();
+});
+
+chooseTable4.addEventListener('click', () => {
+    currentTable = 4;
+    currentPairCounts = JSON.parse(localStorage.getItem('pairCounts4')) || {}; // Загружаем данные для стола 4
+    updateHistory();
+});
+
 
 // Загрузка истории для выбранного стола при старте
 updateHistory();
