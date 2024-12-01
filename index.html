@@ -373,7 +373,7 @@
 #pairCountDisplay {
     position: fixed; /* Фиксируем позицию */
     top: 630px; /* Отступ сверху */
-    left: 950px; /* Отступ слева */
+    left: 1050px; /* Отступ слева */
     z-index: 1000; /* Обеспечиваем, чтобы элемент был поверх других */
     display: flex; /* Включаем флекс для выравнивания */
     justify-content: center;
@@ -544,7 +544,7 @@
             // Создаем элемент с количеством связок
             const pairCountElement = document.createElement('span');
             pairCountElement.classList.add('pair-count-display');  // Применяем стиль
-            pairCountElement.textContent = `Количество связок загружено ${totalPairCount}`;
+            pairCountElement.textContent = `Связок загружено ${totalPairCount}`;
 
             // Обновляем отображение в pairCountDisplay
             pairCountDisplay.innerHTML = '';  // Очищаем текущий контент
