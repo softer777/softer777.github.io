@@ -92,18 +92,31 @@
         }
 
         #output {
-            position: fixed; /* Это фиксирует текст на месте, не влияя на положение других элементов */
-            top: 830px;
-            left: 50%;
-            transform: translateX(-50%); /* Центрирует надпись */
-            font-size: 18px;
-            text-align: center;
-            color: white;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 5px;
-        }
+    position: fixed;             /* Фиксируем блок на экране */
+    top: 830px;                  /* Отступ сверху */
+    left: 50%;                   /* Центрируем по горизонтали */
+    transform: translateX(-50%); /* Центрируем относительно 50% ширины экрана */
+    font-size: 18px;
+    text-align: center;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    max-height: 300px;           /* Максимальная высота блока */
+    width: 30%;                  /* Ширина блока */
+    box-sizing: border-box;      /* Чтобы padding учитывался в общей ширине */
+    overflow-y: hidden;          /* Отключаем стандартную полосу прокрутки */
+}
 
+/* Скрыть полосу прокрутки, но оставить функциональность */
+#output::-webkit-scrollbar {
+    display: none;  /* Прячем полосу прокрутки */
+}
+
+/* Для Firefox */
+#output {
+    scrollbar-width: none; /* Прячет полосу прокрутки в Firefox */
+}
         #history {
             margin-top: 20px;
             font-size: 16px;
@@ -432,6 +445,61 @@
     <div id="output"></div>
     <div id="history"></div>
     <script>
+       const output = document.getElementById('output');
+
+// Максимальная и минимальная скорость прокрутки
+const maxSpeed = 8; // Максимальная скорость прокрутки
+const minSpeed = 0.5; // Минимальная скорость прокрутки (чтобы прокрутка не останавливалась сразу)
+
+// Начальная скорость прокрутки
+let scrollVelocity = 0;  
+let isScrolling = false;  
+let lastTime = 0;         
+
+// Функция для плавного обновления прокрутки
+function smoothScroll() {
+    if (Math.abs(scrollVelocity) > minSpeed) {
+        output.scrollTop += scrollVelocity;  // Прокручиваем на текущую скорость
+
+        // Ограничиваем скорость прокрутки (чтобы она не была слишком быстрой)
+        if (scrollVelocity > 0) {
+            scrollVelocity = Math.max(scrollVelocity - 0.2, minSpeed);  // Замедляем при прокрутке вниз
+        } else if (scrollVelocity < 0) {
+            scrollVelocity = Math.min(scrollVelocity + 0.2, -minSpeed);  // Замедляем при прокрутке вверх
+        }
+
+        // Ограничиваем прокрутку по высоте содержимого
+        if (output.scrollTop >= output.scrollHeight - output.clientHeight) {
+            output.scrollTop = output.scrollHeight - output.clientHeight;  // Не даем прокручивать дальше вниз
+        } else if (output.scrollTop <= 0) {
+            output.scrollTop = 0;  // Не даем прокручивать выше первого элемента
+        }
+
+        requestAnimationFrame(smoothScroll);  // Запрашиваем следующее обновление экрана
+    } else {
+        isScrolling = false;  // Прекращаем прокрутку, если скорость меньше минимальной
+    }
+}
+
+// Обработчик события прокрутки колесика мыши
+output.addEventListener('wheel', (event) => {
+    const delta = event.deltaY || event.detail || -event.wheelDelta;
+
+    // Устанавливаем скорость прокрутки, в зависимости от направления колесика мыши
+    scrollVelocity += delta * 0.05;  // Пропорционально скорости колесика
+
+    // Ограничиваем максимальную скорость прокрутки
+    scrollVelocity = Math.max(Math.min(scrollVelocity, maxSpeed), -maxSpeed);
+
+    // Если прокрутка не была активирована, запускаем её
+    if (!isScrolling) {
+        isScrolling = true;
+        smoothScroll();
+    }
+
+    event.preventDefault(); // Отменяем стандартное поведение прокрутки
+});
+        
         // Открытие базы данных
         let db;
         let request = indexedDB.open("rouletteDB", 1);
