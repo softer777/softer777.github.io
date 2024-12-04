@@ -185,37 +185,95 @@
     box-shadow: 0 0 15px rgba(0, 0, 0, 1), 0 0 25px rgba(0, 0, 0, 0.7); /* Ярче свечение при наведении */
 }
 
-        .x2-button {
-            display: inline-block;
-            padding: 5px 10px;
-            background-color: gold;
-            color: black;
-            font-weight: bold;
-            border-radius: 5px;
-            margin-left: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            animation: glow 1.5s infinite alternate; /* Добавление анимации свечения */
-        }
+/* Общий стиль для кнопки */
+.x2-button {
+    display: inline-block;
+    padding: 5px 10px;
+    color: black;
+    font-weight: bold;
+    border-radius: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
 
-        /* Эффект свечения */
-        @keyframes glow {
-            0% {
-                box-shadow: 0 0 10px gold, 0 0 20px gold, 0 0 30px gold;
-                background-color: gold;
-            }
-            100% {
-                box-shadow: 0 0 20px #ffcc00, 0 0 30px #ffcc00, 0 0 40px #ffcc00;
-                background-color: #ffcc00; /* Слегка измененный золотой оттенок */
-            }
-        }
+/* Множитель x2 - ярко-желтая кнопка */
+.x2-button.x2 {
+    background-color: #ffcc00; /* Ярко-желтый */
+    box-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00;
+}
 
-        /* Эффект при наведении */
-        .x2-button:hover {
-            background-color: #f39c12;
-            animation: none; /* Останавливаем анимацию при наведении */
-            box-shadow: 0 0 15px #f39c12, 0 0 25px #f39c12, 0 0 35px #f39c12; /* Усиленный эффект свечения при hover */
-        }
+/* Множитель x3 - желто-красная кнопка */
+.x2-button.x3 {
+    background-color: #f39c12; /* Желтый с красным оттенком */
+    box-shadow: 0 0 10px #f39c12, 0 0 20px #f39c12;
+}
+
+/* Множитель x4 - желто-красная кнопка */
+.x2-button.x4 {
+    background-color: #e67e22; /* Оранжевый */
+    box-shadow: 0 0 10px #e67e22, 0 0 20px #e67e22;
+}
+
+/* Множитель x5 - ярко-красная кнопка */
+.x2-button.x5 {
+    background-color: #e74c3c; /* Красный */
+    box-shadow: 0 0 10px #e74c3c, 0 0 20px #e74c3c;
+}
+
+/* Множитель x6 - переход от красного к голубому */
+.x2-button.x6 {
+    background-color: #ff5733; /* Красный с оранжевым оттенком */
+    box-shadow: 0 0 10px #ff5733, 0 0 20px #ff5733;
+}
+
+/* Множитель x7 - более голубой оттенок с красным */
+.x2-button.x7 {
+    background-color: #ff704d; /* Еще более голубо-красный */
+    box-shadow: 0 0 10px #ff704d, 0 0 20px #ff704d;
+}
+
+/* Множитель x8 - переход от красного к голубому */
+.x2-button.x8 {
+    background-color: #ff8c1a; /* Переход к оранжевому */
+    box-shadow: 0 0 10px #ff8c1a, 0 0 20px #ff8c1a;
+}
+
+/* Множитель x9 - почти голубой с красным оттенком */
+.x2-button.x9 {
+    background-color: #ff9f33; /* Еще больше голубого */
+    box-shadow: 0 0 10px #ff9f33, 0 0 20px #ff9f33;
+}
+
+/* Множитель x10 - неоново-голубая кнопка */
+.x2-button.x10 {
+    background-color: #00bfff; /* Ярко-голубой / Неоновый оттенок */
+    box-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
+}
+
+/* Множители больше x10 - продолжаем неоновый эффект */
+.x2-button.x11 {
+    background-color: #00d9ff; /* Ярко-голубой, холодный оттенок */
+    box-shadow: 0 0 10px #00d9ff, 0 0 20px #00d9ff;
+}
+
+.x2-button.x12 {
+    background-color: #00aaff; /* Еще более холодный голубой */
+    box-shadow: 0 0 10px #00aaff, 0 0 20px #00aaff;
+}
+
+.x2-button.x13 {
+    background-color: #0099ff; /* Более насыщенный голубой */
+    box-shadow: 0 0 10px #0099ff, 0 0 20px #0099ff;
+}
+
+/* Эффект при наведении на кнопку */
+.x2-button:hover {
+    background-color: #f39c12;
+    box-shadow: 0 0 15px #f39c12, 0 0 25px #f39c12, 0 0 35px #f39c12;
+}
+
+
 /* Стиль для кнопки "Пояснить" */
 #explainButton {
     background-color: #e74c3c; /* Красный цвет */
@@ -651,7 +709,6 @@ output.addEventListener('wheel', (event) => {
             });
         });
 
-        // Функция для отслеживания чисел и их комбинаций
         function trackNumberPairs(num) {
             let output = document.getElementById('output');
             output.innerHTML = ''; // Очистить вывод
@@ -671,23 +728,43 @@ output.addEventListener('wheel', (event) => {
             }
 
             let found = false;
+            let pairsWithX = []; // Массив для чисел с xN
+            let pairsWithoutX = []; // Массив для чисел без xN
+
             for (let key in currentPairCounts) {
                 let pair = JSON.parse(key);
                 if (pair[0] === num) {
                     const nextNumber = pair[1];
-                    const button = createButton(nextNumber);
-                    output.innerHTML += `После числа ${pair[0]} падает ${button.outerHTML}`;
-
-                    if (currentPairCounts[key] > 1) {
-                        const xButton = createXButton(currentPairCounts[key]);
-                        output.innerHTML += xButton.outerHTML;
+                    const count = currentPairCounts[key];
+                    
+                    // Если количество связок больше 1, добавляем с кнопкой xN
+                    if (count > 1) {
+                        pairsWithX.push({nextNumber, count});
+                    } else {
+                        pairsWithoutX.push({nextNumber});
                     }
-
-                    output.innerHTML += '<br>';
 
                     found = true;
                 }
             }
+
+            // Сортировка пар с xN по убыванию количества
+            pairsWithX.sort((a, b) => b.count - a.count);
+
+            // Выводим пары с xN (с кнопкой xN)
+            pairsWithX.forEach(pair => {
+                const button = createButton(pair.nextNumber);
+                output.innerHTML += `После числа ${num} падает ${button.outerHTML} `;
+                const xButton = createXButton(pair.count);
+                output.innerHTML += xButton.outerHTML;
+                output.innerHTML += '<br>';
+            });
+
+            // Выводим пары без xN (без кнопки xN)
+            pairsWithoutX.forEach(pair => {
+                const button = createButton(pair.nextNumber);
+                output.innerHTML += `После числа ${num} падает ${button.outerHTML}<br>`;
+            });
 
             if (!found) {
                 output.innerHTML += `После числа ${num} нет связки.<br>`;
@@ -706,13 +783,36 @@ output.addEventListener('wheel', (event) => {
             return button;
         }
 
-        // Функция для создания кнопки xN
-        function createXButton(count) {
-            const button = document.createElement('span');
-            button.classList.add('x2-button');
-            button.textContent = `x${count}`;
-            return button;
-        }
+        // Функция для создания кнопки xN с изменяющимся цветом в зависимости от множителя
+// Функция для создания кнопки xN с изменяющимся цветом в зависимости от множителя
+function createXButton(count) {
+    const button = document.createElement('span');
+    button.classList.add('x2-button');
+    
+    // Добавляем соответствующие классы в зависимости от count
+    if (count === 2) {
+        button.classList.add('x2'); // Желтая кнопка для x2
+    } else if (count === 3) {
+        button.classList.add('x3'); // Желто-красная кнопка для x3
+    } else if (count === 4) {
+        button.classList.add('x4'); // Оранжевая кнопка для x4
+    } else if (count === 5) {
+        button.classList.add('x5'); // Красная кнопка для x5
+    } else if (count === 6) {
+        button.classList.add('x6'); // Плавный переход от красного к голубому
+    } else if (count === 7) {
+        button.classList.add('x7'); // Красно-голубая кнопка для x7
+    } else if (count === 8) {
+        button.classList.add('x8'); // Плавный переход к голубому для x8
+    } else if (count === 9) {
+        button.classList.add('x9'); // Почти голубая кнопка для x9
+    } else if (count >= 10) {
+        button.classList.add('x10'); // Неоново-голубая кнопка для x10 и выше
+    }
+
+    button.textContent = `x${count}`;
+    return button;
+}
 
         // Добавление обработчиков для номеров рулетки (по аналогии с твоим исходным кодом)
         columns.forEach((column) => {
