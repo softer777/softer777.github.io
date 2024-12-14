@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pepesoft</title>
-    <link rel="icon" href="icon.png" type="image/x-icon">
+    <link rel="icon" href="icon.png" type="image/png">
     <!-- Подключаем шрифт и иконки -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&family=Roboto:wght@400&display=swap&family=Baloo+2:wght@700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
@@ -133,6 +133,7 @@
             opacity: 0;
             transform: translateY(50px); /* Сдвигаем блок немного вниз */
             transition: opacity 1s ease, transform 1s ease; /* Плавный переход для opacity и transform */
+            margin-bottom: 20px;
         }
 
         .additional-content.visible {
@@ -198,24 +199,6 @@
             bottom: 0;
             width: 100%;
         }
-        /* Анимация для новых блоков при наведении */
-.additional-content:hover {
-    transform: scale(1.05); /* Немного увеличиваем блок при наведении */
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Добавляем тень при наведении */
-    transition: all 0.3s ease; /* Плавное изменение */
-}
-
-/* Анимация для появления новых блоков при прокрутке */
-@keyframes fadeInNewBlock {
-    0% {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
     </style>
 </head>
 <body>
@@ -266,44 +249,35 @@
 
     <script>
         // Функция для проверки прокрутки страницы и появления блоков при прокрутке до центра экрана
-window.addEventListener('scroll', function () {
-    const blocks = document.querySelectorAll('.additional-content, .additional-content-buttons'); // Все блоки с классом .additional-content и .additional-content-buttons
+        window.addEventListener('scroll', function() {
+            const blocks = document.querySelectorAll('.additional-content, .additional-content-buttons'); // Все блоки с классом .additional-content и .additional-content-buttons
 
-    blocks.forEach(function (block) {
-        const blockPosition = block.getBoundingClientRect().top; // Позиция блока относительно экрана
-        const screenPosition = window.innerHeight; // Высота видимой части экрана
-        const blockHeight = block.offsetHeight; // Высота блока
+            blocks.forEach(function(block) {
+                const blockPosition = block.getBoundingClientRect().top; // Позиция блока относительно экрана
+                const screenPosition = window.innerHeight; // Высота видимой части экрана
+                const blockHeight = block.offsetHeight; // Высота блока
 
-        // Проверяем, находится ли блок в центре экрана
-        if (blockPosition <= screenPosition - blockHeight / 2 && blockPosition >= 0) {
-            block.classList.add('visible'); // Добавляем класс visible, если блок в центре экрана
+                // Проверяем, находится ли блок в центре экрана
+                if (blockPosition <= screenPosition - blockHeight / 2 && blockPosition >= 0) {
+                    block.classList.add('visible'); // Добавляем класс visible, если блок в центре экрана
+                }
+            });
+        });
+
+         // Функция для отображения дополнительных блоков
+        function showMoreBlocks() {
+            // Создаем новые блоки
+            for (let i = 10; i <= 22; i++) {
+                const newBlock = document.createElement('div');
+                newBlock.classList.add('additional-content');
+                newBlock.classList.add('visible');
+                newBlock.style.animation = 'fadeInNewBlock 1s';  // Добавляем анимацию для новых блоков
+                newBlock.innerHTML = `
+                    <img src="./${i}.png" alt="Image Example">
+                `;
+                document.body.appendChild(newBlock);
+            }
         }
-    });
-});
-
-// Функция для отображения дополнительных блоков
-function showMoreBlocks() {
-    // Создаем новые блоки
-    for (let i = 10; i <= 22; i++) {
-        const newBlock = document.createElement('div');
-        newBlock.classList.add('additional-content');
-        newBlock.classList.add('visible');
-        newBlock.style.animation = 'fadeInNewBlock 1s';  // Добавляем анимацию для новых блоков
-        newBlock.style.marginBottom = '20px';  // Добавляем отступ снизу для новых блоков
-        newBlock.innerHTML = `
-            <img src="./${i}.png" alt="Image Example">
-        `;
-        document.body.appendChild(newBlock);
-    }
-}
-
-// Инициализация для уже добавленных блоков
-document.addEventListener('DOMContentLoaded', function () {
-    const blocks = document.querySelectorAll('.additional-content');
-    blocks.forEach(block => {
-        block.classList.add('visible'); // Для уже загруженных блоков добавляем класс 'visible'
-    });
-});
     </script>
 </body>
 </html>
