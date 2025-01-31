@@ -5,279 +5,420 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pepesoft</title>
     <link rel="icon" href="icon.png" type="image/png">
-    <!-- Подключаем шрифт и иконки -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&family=Roboto:wght@400&display=swap&family=Baloo+2:wght@700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Подключение библиотеки для анимации -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/Circ.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
     <style>
+        /* Стили для фона и анимации */
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Roboto', sans-serif;
-            background-image: url('fone.png');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            min-height: 100vh; /* Минимальная высота для страницы */
+            background-color: #000; /* Черный фон для всего тела */
+            color: #fff;
+            overflow: hidden; /* Убираем скролл */
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #large-header {
+            position: relative;
+            width: 100%;
+            height: 100vh; /* Высота на весь экран */
+            background-color: #000; /* Черный фон для header */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+            margin-top: 40px;
+        }
+
+        .title {
+            font-size: 4rem; /* Увеличенный размер шрифта */
+            font-weight: bold;
+            margin-bottom: 20px; /* Уменьшили отступ сверху */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 1s ease-in-out;
+        }
+
+        .images-container {
+            display: flex;
+            flex-direction: row; /* Карточки по горизонтали */
+            gap: 40px; /* Увеличенный отступ между карточками */
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap; /* Разрешаем обтекание на маленьких экранах */
+        }
+
+        .image-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 350px; /* Увеличенная ширина карточки */
+            height: 450px; /* Увеличенная высота карточки */
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
-            text-align: left;
-            padding: 20px;
-            animation: fadeInBackground 3s ease-in-out;
+            align-items: center;
+            justify-content: flex-end;
+            opacity: 0;
+            animation: fadeInUp 1s ease-in-out forwards;
         }
 
-        @keyframes fadeInBackground {
-            0% { background-color: rgba(0, 0, 0, 0); }
-            100% { background-color: rgba(0, 0, 0, 0.5); }
+        .image-wrapper:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
         }
 
-        .content {
+        .image-wrapper img {
             width: 100%;
-            max-width: 400px;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 30px;
-            border-radius: 10px;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 1;
+            border-radius: 15px;
+        }
+
+        .image-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 2;
+            margin-bottom: 15px; /* Добавляем отступ снизу */
             opacity: 0;
-            animation: fadeInContent 1.5s forwards;
+            animation: fadeInText 1s ease-in-out forwards;
         }
 
-        @keyframes fadeInContent {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        h1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 48px;
+        .buttons {
+            display: flex;
+            gap: 10px; /* Уменьшенный отступ между кнопками */
             margin-bottom: 20px;
-            font-weight: 400;
-            color: white;
-            opacity: 0;
-            animation: fadeIn 1.5s 0.5s forwards;
+            z-index: 1;
         }
 
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #fff;
+            color: #000000;  /* Начальный цвет текста */
+            font-weight: bold;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            outline: none;
         }
 
-        p {
-            font-size: 16px;
-            line-height: 1.8;
-            margin-bottom: 30px;
-            white-space: pre-wrap;
-            opacity: 0;
-            animation: fadeInText 2s 1s forwards;
+        button:hover {
+            background: #000000; /* Цвет фона кнопки при наведении */
+            color: #fff;  /* Цвет текста при наведении */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Анимации */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUpFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes fadeInText {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .btn-download, .btn-telegram {
-            background-color: white;
-            color: black;
-            font-size: 18px;
-            padding: 15px 30px;
-            border: 2px solid transparent;
-            border-radius: 10px;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            transition: all 0.3s ease-in-out;
-            margin-right: 10px;
-            display: inline-flex;
-            align-items: center;
-            opacity: 0;
-            animation: fadeInButtons 2s 1.5s forwards;
+        /* Индивидуальные задержки анимации для каждой карточки */
+        .image-wrapper:nth-child(1) {
+            animation-delay: 0.3s;
         }
 
-        @keyframes fadeInButtons {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
+        .image-wrapper:nth-child(2) {
+            animation-delay: 0.6s;
         }
 
-        .btn-download:hover, .btn-telegram:hover {
-            background: linear-gradient(45deg, #FF6347, #FF4500);
-            color: white;
-            border-color: #FF4500;
-            transform: scale(1.1);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        .image-wrapper:nth-child(3) {
+            animation-delay: 0.9s;
         }
 
-        .btn-telegram {
-            font-size: 0;
-            padding: 15px;
+        .image-title:nth-child(1) {
+            animation-delay: 0.3s;
         }
 
-        .btn-telegram i {
-            font-size: 20px;
+        .image-title:nth-child(2) {
+            animation-delay: 0.6s;
         }
 
-        .buttons-container {
-            display: flex;
-            justify-content: flex-start;
-            gap: 10px;
+        .image-title:nth-child(3) {
+            animation-delay: 0.9s;
         }
 
-        /* Блоки, которые будут показываться при прокрутке */
-        .additional-content {
-            width: 100%;
-            max-width: 600px;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 30px;
-            border-radius: 10px;
-            margin-top: 100px;
-            visibility: hidden; /* Сначала скрыт */
-            opacity: 0;
-            transform: translateY(50px); /* Сдвигаем блок немного вниз */
-            transition: opacity 1s ease, transform 1s ease; /* Плавный переход для opacity и transform */
-            margin-bottom: 20px;
-        }
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
 
-        .additional-content.visible {
-            visibility: visible; /* Блок становится видимым */
-            opacity: 1; /* Блок становится полностью видимым */
-            transform: translateY(0); /* Блок сдвигается вверх */
-        }
+            .images-container {
+                flex-direction: column;
+                gap: 20px;
+            }
 
-        .additional-content img {
-            max-width: 100%;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
+            .image-wrapper {
+                width: 80%;
+                height: 60vh;
+            }
 
-        /* Для последнего блока с кнопками */
-        .additional-content-buttons {
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 30px;
-            border-radius: 10px;
-            margin-top: 100px;
-            visibility: hidden;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: opacity 1s ease, transform 1s ease;
-        }
-
-        .additional-content-buttons.visible {
-            visibility: visible;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Кнопка "Посмотреть больше" под стиль кнопок */
-        .btn-more {
-            background-color: white;
-            color: black;
-            font-size: 18px;
-            padding: 15px 30px;
-            border: 2px solid transparent;
-            border-radius: 10px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-        }
-
-        .btn-more:hover {
-            background: linear-gradient(45deg, #FF6347, #FF4500);
-            color: white;
-            border-color: #FF4500;
-            transform: scale(1.1);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Стиль для нижней подписи */
-        .footer {
-            text-align: center; /* Центрируем текст */
-            font-size: 16px; /* Размер шрифта */
-            color: white; /* Белый цвет текста */
-            background-color: rgba(0, 0, 0, 0.7); /* Прозрачный черный фон для контраста */
-            padding: 10px; /* Отступы для текста */
-            position: fixed; /* Фиксируем футер внизу */
-            bottom: 0;
-            width: 100%;
+            button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="content">
-        <h1>DOWNLOAD PEPESOFT NOW!</h1>
-        <p>Устали фармить и нужны вирты? Просто установите эту программу и забудете про фарм раз и навсегда. Просто нажмите на одну из кнопок ниже, чтобы начать скачивание или перейти в наш Telegram.</p>
-        <div class="buttons-container">
-            <a href="https://github.com/softer777/files/releases/download/123123123/run.bat" class="btn-download">Скачать</a>
-            <a href="https://t.me/pepesoft777" class="btn-telegram"><i class="fab fa-telegram-plane"></i></a>
+
+    <!-- Контейнер для анимации и заголовка -->
+    <div id="large-header">
+        <canvas id="demo-canvas"></canvas>
+        <!-- Контейнер для карточек -->
+        <div class="container">
+            <h1 class="title">Pepesoft</h1>
+            <div class="images-container">
+                <div class="card-1">
+                    <div class="image-title">GTA 5 RP</div>
+                    <div class="image-wrapper">
+                        <img src="1.png" alt="Image 1">
+                        <div class="buttons">
+                            <a href="https://github.com/dsofter777/files/releases/download/gta/run.bat" class="download-btn">
+                                <button>Скачать</button>
+                            </a>
+
+                            <a href="https://funpay.com/lots/offer?id=37003504" class="buy-key-btn">
+                                <button>Приобрести ключ</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-2">
+                    <div class="image-title">R M R P</div>
+                    <div class="image-wrapper">
+                        <img src="2.jpg" alt="Image 2">
+                        <div class="buttons">
+                            <a href="https://github.com/dsofter777/files/releases/download/rmrp/run.bat" class="download-btn">
+                                <button>Скачать</button>
+                            </a>
+
+                            <a href="https://funpay.com/lots/offer?id=37334280" class="buy-key-btn">
+                                <button>Приобрести ключ</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-3">
+                    <div class="image-title">Russian Fish 4</div>
+                    <div class="image-wrapper">
+                        <img src="3.jpg" alt="Image 3">
+                        <div class="buttons">
+                            <a href="https://github.com/dsofter777/files/releases/download/rf4/run.bat" class="download-btn">
+                                <button>Скачать</button>
+                            </a>
+
+                            <a href="https://funpay.com/lots/offer?id=37987657" class="buy-key-btn">
+                                <button>Приобрести ключ</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-
-    <!-- Блоки, которые будут показываться при прокрутке -->
-    <div class="additional-content" id="additional-content-1">
-        <img src="./2.png" alt="Image Example">
-        <p>Прокручивание рулетки автоматически</p>
-    </div>
-
-    <div class="additional-content" id="additional-content-2">
-        <img src="./1.png" alt="Image Example">
-        <p>Персонаж стоит и его не кикает с сервера</p>
-    </div>
-
-    <div class="additional-content" id="additional-content-3">
-        <img src="./3.png" alt="Image Example">
-        <p>Покупка лотерейного билета каждые два часа</p>
-    </div>
-
-    <div class="additional-content" id="additional-content-4">
-        <img src="./4.png" alt="Image Example">
-        <p>Интерфейс</p>
-    </div>
-
-    <!-- Новый блок с кнопками для скачивания и Telegram -->
-    <div class="additional-content-buttons" id="additional-content-5">
-        <p>Присоединяйся к фарму с умом вместе с PEPESOFT!</p>
-        <div class="buttons-container">
-            <a href="https://github.com/softer777/files/releases/download/123123123/run.bat" class="btn-download">Скачать</a>
-            <a href="https://t.me/pepesoft777" class="btn-telegram"><i class="fab fa-telegram-plane"></i></a>
-        </div>
-        <button class="btn-more" onclick="showMoreBlocks()">Посмотреть больше</button>
-    </div>
-
-    <!-- Подпись внизу -->
-    <div class="footer">
-        © Pepesoft 2024 All right reserved.
     </div>
 
     <script>
-        // Функция для проверки прокрутки страницы и появления блоков при прокрутке до центра экрана
-        window.addEventListener('scroll', function() {
-            const blocks = document.querySelectorAll('.additional-content, .additional-content-buttons'); // Все блоки с классом .additional-content и .additional-content-buttons
+        (function() {
+        var width, height, largeHeader, canvas, ctx, points, target, animateHeader = true;
 
-            blocks.forEach(function(block) {
-                const blockPosition = block.getBoundingClientRect().top; // Позиция блока относительно экрана
-                const screenPosition = window.innerHeight; // Высота видимой части экрана
-                const blockHeight = block.offsetHeight; // Высота блока
+        initHeader();
+        initAnimation();
+        addListeners();
 
-                // Проверяем, находится ли блок в центре экрана
-                if (blockPosition <= screenPosition - blockHeight / 2 && blockPosition >= 0) {
-                    block.classList.add('visible'); // Добавляем класс visible, если блок в центре экрана
+        function initHeader() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            target = { x: width / 2, y: height / 2 };
+
+            largeHeader = document.getElementById('large-header');
+            largeHeader.style.height = height + 'px';
+
+            canvas = document.getElementById('demo-canvas');
+            canvas.width = width;
+            canvas.height = height;
+            ctx = canvas.getContext('2d');
+
+            points = [];
+            // Уменьшаем плотность точек для улучшения производительности
+            var density = 15;
+            for (var x = 0; x < width; x = x + width / density) {
+                for (var y = 0; y < height; y = y + height / density) {
+                    var px = x + Math.random() * width / density;
+                    var py = y + Math.random() * height / density;
+                    var p = { x: px, originX: px, y: py, originY: py };
+                    points.push(p);
                 }
-            });
-        });
+            }
 
-         // Функция для отображения дополнительных блоков
-        function showMoreBlocks() {
-            // Создаем новые блоки
-            for (let i = 10; i <= 22; i++) {
-                const newBlock = document.createElement('div');
-                newBlock.classList.add('additional-content');
-                newBlock.classList.add('visible');
-                newBlock.style.animation = 'fadeInNewBlock 1s';  // Добавляем анимацию для новых блоков
-                newBlock.innerHTML = `
-                    <img src="./${i}.png" alt="Image Example">
-                `;
-                document.body.appendChild(newBlock);
+            for (var i = 0; i < points.length; i++) {
+                var c = new Circle(points[i], 2 + Math.random() * 2, 'rgba(255,255,255,0.3)');
+                points[i].circle = c;
             }
         }
+
+        function addListeners() {
+            if (!('ontouchstart' in window)) {
+                window.addEventListener('mousemove', mouseMove);
+            }
+            window.addEventListener('resize', resize);
+        }
+
+        function mouseMove(e) {
+            target.x = e.pageX;
+            target.y = e.pageY;
+        }
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            largeHeader.style.height = height + 'px';
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        function initAnimation() {
+            animate();
+            for (var i in points) {
+                shiftPoint(points[i]);
+            }
+        }
+
+        function animate() {
+            if (animateHeader) {
+                ctx.clearRect(0, 0, width, height);
+                for (var i in points) {
+                    if (Math.abs(getDistance(target, points[i])) < 4000) {
+                        points[i].active = 0.3;
+                        points[i].circle.active = 0.6;
+                    } else if (Math.abs(getDistance(target, points[i])) < 20000) {
+                        points[i].active = 0.1;
+                        points[i].circle.active = 0.3;
+                    } else if (Math.abs(getDistance(target, points[i])) < 40000) {
+                        points[i].active = 0.02;
+                        points[i].circle.active = 0.1;
+                    } else {
+                        points[i].active = 0;
+                        points[i].circle.active = 0;
+                    }
+
+                    drawLines(points[i]);
+                    points[i].circle.draw();
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function shiftPoint(p) {
+            gsap.to(p, 1 + Math.random(), {
+                x: p.originX - 50 + Math.random() * 100,
+                y: p.originY - 50 + Math.random() * 100,
+                ease: Circ.easeInOut,
+                onComplete: function () {
+                    shiftPoint(p);
+                }
+            });
+        }
+
+        function drawLines(p) {
+            if (!p.active) return;
+            for (var i in p.closest) {
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(p.closest[i].x, p.closest[i].y);
+                ctx.strokeStyle = 'rgba(255,255,255,' + p.active + ')';
+                ctx.stroke();
+            }
+        }
+
+        function Circle(pos, rad, color) {
+            var _this = this;
+
+            (function () {
+                _this.pos = pos || null;
+                _this.radius = rad || null;
+                _this.color = color || null;
+            })();
+
+            this.draw = function () {
+                if (!_this.active) return;
+                ctx.beginPath();
+                ctx.arc(_this.pos.x, _this.pos.y, _this.radius, 0, 2 * Math.PI, false);
+                ctx.fillStyle = 'rgba(255,255,255,' + _this.active + ')';
+                ctx.fill();
+            };
+        }
+
+        function getDistance(p1, p2) {
+            return Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2);
+        }
+    })();
+
     </script>
+
 </body>
 </html>
