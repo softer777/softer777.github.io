@@ -209,6 +209,7 @@
         @media (max-width: 768px) {
             .title {
                 font-size: 2rem;
+                text-align: center;
             }
         
             .images-container {
@@ -218,12 +219,14 @@
             }
         
             .image-wrapper {
-                width: 90%; /* Делаем карточки более компактными */
+                width: 100%;
+                max-width: 320px;
                 height: auto;
             }
         
             .image-wrapper img {
-                height: auto; /* Даем возможность изображению адаптироваться */
+                height: auto;
+                max-height: 200px;
             }
         
             .buttons {
@@ -235,6 +238,7 @@
         
             button {
                 width: 100%;
+                max-width: 150px;
                 padding: 12px;
                 font-size: 1rem;
             }
