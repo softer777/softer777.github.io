@@ -24,6 +24,8 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow-x: hidden; /* Запрет горизонтального скролла */
+            overflow-y: auto;
         }
 
         #large-header {
@@ -79,7 +81,8 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             width: 350px; /* Увеличенная ширина карточки */
-            height: 450px; /* Увеличенная высота карточки */
+            min-height: 400px; /* Увеличенная высота карточки */
+            height: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
