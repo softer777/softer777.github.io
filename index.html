@@ -241,6 +241,14 @@
                 font-size: 1rem;
             }
         }
+        .image-wrapper:hover {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+.image-wrapper {
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+
     </style>
 </head>
 <body>
@@ -302,6 +310,7 @@
     </div>
 
     <script>
+
         (function() {
         var width, height, largeHeader, canvas, ctx, points, target, animateHeader = true;
 
