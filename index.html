@@ -24,6 +24,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            outline: none; 
             
         }
 
@@ -55,11 +56,14 @@
         }
 
         .title {
-            font-size: clamp(2rem, 5vw, 4rem); /* Увеличенный размер шрифта */
+            font-size: clamp(2rem, 5vw, 4rem);
             font-weight: bold;
-            margin-bottom: 20px; /* Уменьшили отступ сверху */
+            margin-bottom: 20px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             animation: fadeInDown 1s ease-in-out;
+            cursor: default;
+            user-select: none;  /* Отключает выделение текста */
+            outline: none;      /* Убирает каретку */
         }
 
         .images-container {
@@ -71,28 +75,6 @@
             flex-wrap: wrap; /* Разрешаем обтекание на маленьких экранах */
         }
 
-        .image-wrapper {
-            position: relative;
-            overflow: hidden;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            width: 350px; /* Увеличенная ширина карточки */
-            height: 450px; /* Увеличенная высота карточки */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            opacity: 0;
-            animation: fadeInUp 1s ease-in-out forwards;
-        }
-
-        .image-wrapper:hover {
-            transform: scale(1.02);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-        }
 
         .image-wrapper img {
             width: 100%;
@@ -114,6 +96,7 @@
             margin-bottom: 15px; /* Добавляем отступ снизу */
             opacity: 0;
             animation: fadeInText 1s ease-in-out forwards;
+            outline: none; 
         }
 
         .buttons {
@@ -205,54 +188,142 @@
         }
 
         @media (max-width: 768px) {
+            /* Заголовок */
             .title {
-                font-size: 2rem;
-                text-align: center;
+                font-size: 2rem; /* Уменьшаем размер шрифта */
+                text-align: center; /* Центрируем текст */
             }
-        
+
+            /* Контейнер с карточками */
             .images-container {
-                flex-direction: column;
+                flex-direction: column; /* Размещаем карточки в колонку */
                 align-items: center;
-                gap: 20px;
+                gap: 20px; /* Уменьшаем отступы между карточками */
             }
-        
+
             .image-wrapper {
-                width: 100%;
-                max-width: 320px;
-                height: auto;
+                width: 100%; /* Устанавливаем ширину в 100% */
+                max-width: 320px; /* Ограничиваем максимальную ширину */
+                height: auto; /* Высота зависит от содержания */
             }
-        
+
             .image-wrapper img {
-                height: auto;
-                max-height: 200px;
+                max-height: 200px; /* Ограничиваем максимальную высоту изображения */
+                object-fit: cover; /* Сохраняем пропорции изображения */
             }
-        
+
+            /* Кнопки */
             .buttons {
-                flex-direction: column;
-                gap: 10px;
-                width: 100%;
-                align-items: center;
+                flex-direction: column; /* Размещаем кнопки по вертикали */
+                gap: 10px; /* Уменьшаем отступы между кнопками */
+                width: 100%; /* Ширина 100% */
+                align-items: center; /* Центрируем кнопки */
             }
-        
+
             button {
                 width: 100%;
-                max-width: 150px;
+                max-width: 150px; /* Ограничиваем максимальную ширину кнопок */
                 padding: 12px;
-                font-size: 1rem;
+                font-size: 1rem; /* Уменьшаем размер шрифта кнопок */
+            }
+
+            /* Убираем большие отступы сверху */
+            .container {
+                margin-top: 0;
+                padding-top: 20px;
             }
         }
-        .image-wrapper:hover {
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+
+
+@keyframes floatText {
+    0% {
+        transform: translateY(100px) rotateX(90deg);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0) rotateX(0);
+        opacity: 1;
+    }
 }
+
+
+
+
 .image-wrapper {
-    transition: box-shadow 0.3s ease-in-out;
+
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    background: transparent; /* Прозрачный фон */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 350px;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    opacity: 0;
+    animation: fadeInUp 1s ease-in-out forwards;
+    border: none; /* Убираем границу */
+
+    /* Убираем 3D-эффекты */
+    transform-style: flat;
+    perspective: none;
+
+    /* Добавляем эффект отражения */
+    -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, rgba(0, 0, 0, 0.4));
+    outline: none;
 }
+
+.image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 1;
+    border-radius: 15px;
+    transform-origin: center;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.image-wrapper:hover img {
+    transform: scale(1.05); /* Убираем 3D-вращение */
+    opacity: 1;
+}
+
+.image-wrapper:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+body, html {
+    user-select: none;  /* Отключает выделение текста на всех элементах */
+    outline: none;      /* Убирает фокус и каретку */
+}
+
+* {
+    user-select: none;  /* Отключает выделение текста на всех элементах */
+    outline: none;      /* Убирает фокус и каретку */
+}
+
+.container {
+    text-align: center;
+    max-width: 1200px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    margin-top: 0; /* Убираем отступ сверху */
+    padding-top: 20px; /* Немного отступа от верхней части экрана, если нужно */
+}
+
+
 
 
     </style>
 </head>
 <body>
-
     <!-- Контейнер для анимации и заголовка -->
     <div id="large-header">
         <canvas id="demo-canvas"></canvas>
@@ -310,13 +381,9 @@
     </div>
 
     <script>
-
+    
         (function() {
         var width, height, largeHeader, canvas, ctx, points, target, animateHeader = true;
-
-        initHeader();
-        initAnimation();
-        addListeners();
 
         function initHeader() {
             width = window.innerWidth;
