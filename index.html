@@ -6,9 +6,9 @@
     <title>Pepesoft</title>
     <link rel="icon" href="icon.png" type="image/png">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <!-- Подключение библиотеки для анимации -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/Circ.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
@@ -21,10 +21,10 @@
             font-family: 'Montserrat', sans-serif;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Обновлено, чтобы блоки располагались сверху */
+            flex-direction: column; /* Обновлено для вертикального расположения */
             height: 100vh;
             outline: none; 
-            
         }
 
         #large-header {
@@ -45,15 +45,6 @@
             z-index: 1;
         }
 
-        .container {
-            text-align: center;
-            max-width: 1200px;
-            width: 100%;
-            position: relative;
-            z-index: 2;
-            margin-top: 40px;
-        }
-
         .title {
             font-size: clamp(2rem, 5vw, 4rem);
             font-weight: bold;
@@ -61,29 +52,17 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             animation: fadeInDown 1s ease-in-out;
             cursor: default;
-            user-select: none;  /* Отключает выделение текста */
-            outline: none;      /* Убирает каретку */
+            user-select: none;
         }
 
         .images-container {
             display: flex;
-            flex-direction: row; /* Карточки по горизонтали */
-            gap: 40px; /* Увеличенный отступ между карточками */
+            flex-direction: row;
+            gap: 40px;
             justify-content: center;
             align-items: flex-start;
-            flex-wrap: wrap; /* Разрешаем обтекание на маленьких экранах */
-        }
-
-
-        .image-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 1;
-            border-radius: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 50px; /* Добавляем отступ снизу */
         }
 
         .image-title {
@@ -92,15 +71,14 @@
             color: #fff;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             z-index: 2;
-            margin-bottom: 15px; /* Добавляем отступ снизу */
+            margin-bottom: 15px;
             opacity: 0;
             animation: fadeInText 1s ease-in-out forwards;
-            outline: none; 
         }
 
         .buttons {
             display: flex;
-            gap: 10px; /* Уменьшенный отступ между кнопками */
+            gap: 10px;
             margin-bottom: 20px;
             z-index: 1;
         }
@@ -110,24 +88,22 @@
             border: none;
             border-radius: 8px;
             background: #fff;
-            color: #000000;  /* Начальный цвет текста */
+            color: #000000;
             font-weight: bold;
             font-family: 'Montserrat', sans-serif;
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            outline: none;
         }
 
         button:hover {
-            background: #000000; /* Цвет фона кнопки при наведении */
-            color: #fff;  /* Цвет текста при наведении */
+            background: #000000;
+            color: #fff;
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
-        /* Анимации */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -161,394 +137,147 @@
             }
         }
 
-        /* Индивидуальные задержки анимации для каждой карточки */
-        .image-wrapper:nth-child(1) {
-            animation-delay: 0.3s;
+        .image-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            background: transparent;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 350px;
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            opacity: 0;
+            animation: fadeInUp 1s ease-in-out forwards;
+            border: none;
+            transform-style: flat;
+            perspective: none;
+            -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, rgba(0, 0, 0, 0.4));
         }
 
-        .image-wrapper:nth-child(2) {
-            animation-delay: 0.6s;
-        }
-
-        .image-wrapper:nth-child(3) {
-            animation-delay: 0.9s;
-        }
-
-        .image-title:nth-child(1) {
-            animation-delay: 0.3s;
-        }
-
-        .image-title:nth-child(2) {
-            animation-delay: 0.6s;
-        }
-
-        .image-title:nth-child(3) {
-            animation-delay: 0.9s;
-        }
-
-        @media (max-width: 768px) {
-            /* Заголовок */
-            .title {
-                font-size: 2rem; /* Уменьшаем размер шрифта */
-                text-align: center; /* Центрируем текст */
-            }
-
-            /* Контейнер с карточками */
-            .images-container {
-                flex-direction: column; /* Размещаем карточки в колонку */
-                align-items: center;
-                gap: 20px; /* Уменьшаем отступы между карточками */
-            }
-
-            .image-wrapper {
-                width: 100%; /* Устанавливаем ширину в 100% */
-                max-width: 320px; /* Ограничиваем максимальную ширину */
-                height: auto; /* Высота зависит от содержания */
-            }
-
-            .image-wrapper img {
-                max-height: 200px; /* Ограничиваем максимальную высоту изображения */
-                object-fit: cover; /* Сохраняем пропорции изображения */
-            }
-
-            /* Кнопки */
-            .buttons {
-                flex-direction: column; /* Размещаем кнопки по вертикали */
-                gap: 10px; /* Уменьшаем отступы между кнопками */
-                width: 100%; /* Ширина 100% */
-                align-items: center; /* Центрируем кнопки */
-            }
-
-            button {
-                width: 100%;
-                max-width: 150px; /* Ограничиваем максимальную ширину кнопок */
-                padding: 12px;
-                font-size: 1rem; /* Уменьшаем размер шрифта кнопок */
-            }
-
-            /* Убираем большие отступы сверху */
-            .container {
-                margin-top: 0;
-                padding-top: 20px;
-            }
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 1;
+            border-radius: 15px;
+            transform-origin: center;
+            transition: transform 0.5s ease, opacity 0.5s ease;
         }
 
 
-@keyframes floatText {
-    0% {
-        transform: translateY(100px) rotateX(90deg);
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(0) rotateX(0);
-        opacity: 1;
-    }
+        .image-wrapper:hover img {
+            transform: scale(1.05);
+            opacity: 1;
+        }
+
+        .image-wrapper:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .container {
+            text-align: center;
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+            margin-top: 0;
+            padding-top: 20px;
+        }
+        .parallax-element {
+  will-change: transform;
+  transition: transform 0.3s ease-out;
 }
-
-
-
-
 .image-wrapper {
-
-    position: relative;
-    overflow: hidden;
-    border-radius: 15px;
-    background: transparent; /* Прозрачный фон */
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    width: 350px;
-    height: 450px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    opacity: 0;
-    animation: fadeInUp 1s ease-in-out forwards;
-    border: none; /* Убираем границу */
-
-    /* Убираем 3D-эффекты */
-    transform-style: flat;
-    perspective: none;
-
-    /* Добавляем эффект отражения */
-    -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, rgba(0, 0, 0, 0.4));
-    outline: none;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
-
-.image-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 1;
-    border-radius: 15px;
-    transform-origin: center;
-    transition: transform 0.5s ease, opacity 0.5s ease;
-}
-
-.image-wrapper:hover img {
-    transform: scale(1.05); /* Убираем 3D-вращение */
-    opacity: 1;
+.image-wrapper {
+  transform: perspective(1000px) rotateX(0) rotateY(0);
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .image-wrapper:hover {
-    transform: scale(1.05);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  transform: perspective(1000px) rotateX(5deg) rotateY(5deg) scale(1.03);
 }
-body, html {
-    user-select: none;  /* Отключает выделение текста на всех элементах */
-    outline: none;      /* Убирает фокус и каретку */
+body {
+  cursor: url('default.cur'), auto;
 }
 
-* {
-    user-select: none;  /* Отключает выделение текста на всех элементах */
-    outline: none;      /* Убирает фокус и каретку */
+button, a {
+  cursor: url('pointer.cur'), pointer;
 }
 
-.container {
-    text-align: center;
-    max-width: 1200px;
+.image-wrapper:hover {
+  cursor: url('hover.cur'), grab;
+}
+.title {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient 5s ease infinite;
+}
+
+@keyframes gradient {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+@media (max-width: 768px) {
+  .images-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .image-wrapper {
+    width: 90%;
+    height: 400px;
+    -webkit-box-reflect: none;
+  }
+  
+  .buttons {
+    flex-direction: column;
     width: 100%;
-    position: relative;
-    z-index: 2;
-    margin-top: 0; /* Убираем отступ сверху */
-    padding-top: 20px; /* Немного отступа от верхней части экрана, если нужно */
+  }
+  
+  button {
+    width: 100%;
+    margin: 5px 0;
+  }
 }
-
-
-.title .avatar {
-  width: 40px;
-  height: 40px;
-  background-image: url(../img/avatar.jpg);
-  display: inline-block;
-  border-radius: 50%;
-  background-size: 100%;
-}
-
-.noite {
-  background: -webkit-linear-gradient(top, rgb(0, 0, 0) 50%, rgb(25, 19, 39)80%, rgb(43, 32, 72));
-  width: 100%;
-  height: 100%;
+.image-wrapper::after {
+  content: '';
   position: absolute;
-  overflow: hidden;
-}
-
-.constelacao {
-  position: absolute;
-  left: 0;
   top: 0;
-  width: 100%;
-  height: 100%;
-  animation: rotate 600s infinite linear;
-}
-
-.estrela {
-  background-color: white;
-  border-radius: 50%;
-  position: absolute;
-  animation-name: estrela;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-
-.estrela.style1 { animation-duration: 0.5s; animation-name: estrela; }
-.estrela.style2 { animation-duration: 1s; animation-name: estrela; }
-.estrela.style3 { animation-duration: 1.5s; animation-name: estrela; }
-.estrela.style4 { animation-duration: 2s; animation-name: estrelaDestacada; }
-
-.estrela.tam1 { width: 1px; height: 1px; }
-.estrela.tam2 { width: 2px; height: 2px; }
-.estrela.tam3 { width: 3px; height: 3px; }
-
-.estrela.opacity1 { opacity:  1; }
-.estrela.opacity2 { opacity: .5; }
-.estrela.opacity3 { opacity: .1; }
-
-.meteoro {
-  position: absolute;
-  background-color: #fff;
-  width: 2px;
-  height: 2px;
-  border-radius: 50%;
-  transform: rotate(-35deg);
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-duration: 1s;
-}
-
-.meteoro:before {
-  content: "";
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 10px;
-  width: 0;
-  height: 0;
-  border-top: 1px solid transparent;
-  border-bottom: 1px solid transparent;
-  border-left: 85px solid white;
-  position: absolute;
-  left: 2px;
-  top: 0;
-}
-
-.meteoro.style1 { animation-name: meteoroStyle1; }
-.meteoro.style2 { animation-name: meteoroStyle2; }
-.meteoro.style3 { animation-name: meteoroStyle3; }
-.meteoro.style4 { animation-name: meteoroStyle4; }
-
-.lua {
-  position: absolute;
-  right: 200px;
-  top: 150px;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  box-shadow: 0 0 160px 0px #fff, 0 0 30px -4px #fff, 0 0 8px 2px rgba(255, 255, 255, 0.26);
-  background-color: #fff;
-  animation-name: lua;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-duration: 10s;
-}
-
-.lua .textura {
-  background-image: url(https://raw.githubusercontent.com/interaminense/starry-sky/master/src/img/bgMoon.png);
-  background-position: center;
-  background-size: 100%;
-  width: 100%;
-  height: 100%;
-  position: absolute;
   left: 0;
-  top: 0;
-  border-radius: 50%;
-  overflow: hidden;
-  opacity: 0.4;
-}
-
-.floresta {
-  position: fixed;
-  left: 0;
+  right: 0;
   bottom: 0;
-  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0 0 50px rgba(78, 205, 196, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.floresta img {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  left: 0;
+.image-wrapper:hover::after {
+  opacity: 1;
 }
-
-@keyframes escurecer {
-  0%   { top: 0; }
-  100% { top: 100%; }
-}
-
-@keyframes estrela {
-  0% {
-    box-shadow: 0 0 10px 0px rgba(255, 255, 255, 0.05);
-  }
-  50% {
-    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.4);
-  }
-  100% {
-    box-shadow: 0 0 10px 0px rgba(255, 255, 255, 0.05);
-  }
-}
-
-@keyframes estrelaDestacada {
-  0% {
-    background-color: #FFFFFF;
-    box-shadow: 0 0 10px 0px rgba(255, 255, 255, 1);
-  }
-  20% {
-    background-color: #FFC4C4;
-    box-shadow: 0 0 10px 0px rgb(255, 196, 196, 1);
-  }
-  80% {
-    background-color: #C4CFFF;
-    box-shadow: 0 0 10px 0px rgb(196, 207, 255, 1);
-  }
-  100% {
-    background-color: #FFFFFF;
-    box-shadow: 0 0 10px 0px rgba(255, 255, 255, 0.2);
-  }
-}
-
-@keyframes meteoroStyle1 {
-  0% { opacity: 0; right: 300px; top: 100px; }
-  30% { opacity: .3; }
-  60% { opacity: .3; }
-  100% { opacity: 0; right: 1000px; top: 600px; }
-}
-
-@keyframes meteoroStyle2 {
-  0% { opacity: 0; right: 700px; top: 100px; }
-  30% { opacity: 1; }
-  60% { opacity: 1; }
-  100% { opacity: 0; right: 1400px; top: 600px; }
-}
-
-@keyframes meteoroStyle3 {
-  0% { opacity: 0; right: 300px; top: 300px; }
-  30% { opacity: 1; }
-  60% { opacity: 1; }
-  100% { opacity: 0; right: 1000px; top: 800px; }
-}
-
-@keyframes meteoroStyle4 {
-  0% { opacity: 0; right: 700px; top: 300px; }
-  30% { opacity: 1; }
-  60% { opacity: 1; }
-  100% { opacity: 0; right: 1400px; top: 800px; }
-}
-
-@keyframes lua {
-  0%{
-    box-shadow: 0 0 160px 0px #fff, 0 0 30px -4px #fff, 0 0 8px 2px rgba(255, 255, 255, 0.26);
-  }
-  50% {
-    box-shadow: 0 0 80px 0px #fff, 0 0 30px -4px #fff, 0 0 8px 2px rgba(255, 255, 255, 0.26);
-  }
-  100% {
-    box-shadow: 0 0 160px 0px #fff, 0 0 30px -4px #fff, 0 0 8px 2px rgba(255, 255, 255, 0.26);
-  }
-}
-
-@keyframes rotate {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
-}
-
-
-
-
     </style>
 </head>
 <body>
-    <div class="noite"></div>
-
-      <div class="constelacao"></div>
-
-      <div class="lua">
-        <div class="textura"></div>
-      </div>
-
-      <div class="chuvaMeteoro"></div>
-
-      <div class="floresta">
-        <img src="https://raw.githubusercontent.com/interaminense/starry-sky/master/src/img/bgTree.png" alt="" />
-      </div>
-    <!-- Контейнер для анимации и заголовка -->
     <div id="large-header">
         <canvas id="demo-canvas"></canvas>
-        <!-- Контейнер для карточек -->
+
         <div class="container">
             <h1 class="title">Pepesoft</h1>
             <div class="images-container">
@@ -560,13 +289,13 @@ body, html {
                             <a href="https://github.com/dsofter777/files/releases/download/gta/run.bat" class="download-btn">
                                 <button>Скачать</button>
                             </a>
-
                             <a href="https://funpay.com/lots/offer?id=37003504" class="buy-key-btn">
                                 <button>Приобрести ключ</button>
                             </a>
                         </div>
                     </div>
                 </div>
+
                 <div class="card-2">
                     <div class="image-title">R M R P</div>
                     <div class="image-wrapper">
@@ -575,13 +304,13 @@ body, html {
                             <a href="https://github.com/dsofter777/files/releases/download/rmrp/run.bat" class="download-btn">
                                 <button>Скачать</button>
                             </a>
-
                             <a href="https://funpay.com/lots/offer?id=37334280" class="buy-key-btn">
                                 <button>Приобрести ключ</button>
                             </a>
                         </div>
                     </div>
                 </div>
+
                 <div class="card-3">
                     <div class="image-title">Russian Fish 4</div>
                     <div class="image-wrapper">
@@ -590,7 +319,6 @@ body, html {
                             <a href="https://github.com/dsofter777/files/releases/download/rf4/run.bat" class="download-btn">
                                 <button>Скачать</button>
                             </a>
-
                             <a href="https://funpay.com/lots/offer?id=37987657" class="buy-key-btn">
                                 <button>Приобрести ключ</button>
                             </a>
@@ -602,194 +330,28 @@ body, html {
     </div>
 
     <script>
-        function init(){
+        gsap.registerPlugin(ScrollTrigger);
 
-          //estrelas
-
-          var style = ["style1", "style2", "style3", "style4"];
-          var tam = ["tam1", "tam1", "tam1", "tam2", "tam3"];
-          var opacity = ["opacity1", "opacity1", "opacity1", "opacity2", "opacity2", "opacity3"];
-
-          function getRandomArbitrary(min, max) {
-            return Math.floor(Math.random() * (max - min)) + min;
-          }
-
-          var estrela = "";
-          var qtdeEstrelas = 500;
-          var noite = document.querySelector(".constelacao");
-          var widthWindow = window.innerWidth;
-          var heightWindow = window.innerHeight;
-
-          for (var i = 0; i < qtdeEstrelas; i++) {
-            estrela += "<span class='estrela " + style[getRandomArbitrary(0, 4)] + " " + opacity[getRandomArbitrary(0, 6)] + " "
-            + tam[getRandomArbitrary(0, 5)] + "' style='animation-delay: ." +getRandomArbitrary(0, 9)+ "s; left: "
-            + getRandomArbitrary(0, widthWindow) + "px; top: " + getRandomArbitrary(0, heightWindow) + "px;'></span>";
-          }
-
-          noite.innerHTML = estrela;
-
-          //meteoros
-
-          var numeroAleatorio = 5000;
-
-          setTimeout(function(){
-            carregarMeteoro();
-          }, numeroAleatorio);
-
-          function carregarMeteoro(){
-            setTimeout(carregarMeteoro, numeroAleatorio);
-            numeroAleatorio = getRandomArbitrary(5000, 10000);
-            var meteoro = "<div class='meteoro "+ style[getRandomArbitrary(0, 4)] +"'></div>";
-            document.getElementsByClassName('chuvaMeteoro')[0].innerHTML = meteoro;
-            setTimeout(function(){
-              document.getElementsByClassName('chuvaMeteoro')[0].innerHTML = "";
-            }, 1000);
-          }
-
-        }
-
-        window.onload = init;
-    
-        (function() {
-        var width, height, largeHeader, canvas, ctx, points, target, animateHeader = true;
-
-        function initHeader() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            target = { x: width / 2, y: height / 2 };
-
-            largeHeader = document.getElementById('large-header');
-            largeHeader.style.height = height + 'px';
-
-            canvas = document.getElementById('demo-canvas');
-            canvas.width = width;
-            canvas.height = height;
-            ctx = canvas.getContext('2d');
-
-            points = [];
-            // Уменьшаем плотность точек для улучшения производительности
-            var density = 15;
-            for (var x = 0; x < width; x = x + width / density) {
-                for (var y = 0; y < height; y = y + height / density) {
-                    var px = x + Math.random() * width / density;
-                    var py = y + Math.random() * height / density;
-                    var p = { x: px, originX: px, y: py, originY: py };
-                    points.push(p);
-                }
-            }
-
-            for (var i = 0; i < points.length; i++) {
-                var c = new Circle(points[i], 2 + Math.random() * 2, 'rgba(255,255,255,0.3)');
-                points[i].circle = c;
-            }
-        }
-
-        function addListeners() {
-            if (!('ontouchstart' in window)) {
-                window.addEventListener('mousemove', mouseMove);
-            } else {
-                window.addEventListener('touchmove', touchMove);
-            }
-        }
-        
-        function touchMove(e) {
-            if (e.touches.length > 0) {
-                target.x = e.touches[0].clientX;
-                target.y = e.touches[0].clientY;
-            }
-        }
-
-        function mouseMove(e) {
-            target.x = e.pageX;
-            target.y = e.pageY;
-        }
-
-        function resize() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            largeHeader.style.height = height + 'px';
-            canvas.width = width;
-            canvas.height = height;
-        }
-
-        function initAnimation() {
-            animate();
-            for (var i in points) {
-                shiftPoint(points[i]);
-            }
-        }
-
-        function animate() {
-            if (animateHeader) {
-                ctx.clearRect(0, 0, width, height);
-                for (var i in points) {
-                    if (Math.abs(getDistance(target, points[i])) < 4000) {
-                        points[i].active = 0.3;
-                        points[i].circle.active = 0.6;
-                    } else if (Math.abs(getDistance(target, points[i])) < 20000) {
-                        points[i].active = 0.1;
-                        points[i].circle.active = 0.3;
-                    } else if (Math.abs(getDistance(target, points[i])) < 40000) {
-                        points[i].active = 0.02;
-                        points[i].circle.active = 0.1;
-                    } else {
-                        points[i].active = 0;
-                        points[i].circle.active = 0;
-                    }
-
-                    drawLines(points[i]);
-                    points[i].circle.draw();
-                }
-            }
-            requestAnimationFrame(animate);
-        }
-
-        function shiftPoint(p) {
-            gsap.to(p, 1 + Math.random(), {
-                x: p.originX - 50 + Math.random() * 100,
-                y: p.originY - 50 + Math.random() * 100,
-                ease: Circ.easeInOut,
-                onComplete: function () {
-                    shiftPoint(p);
-                }
+gsap.utils.toArray(".image-wrapper").forEach((card, i) => {
+  gsap.from(card, {
+    scrollTrigger: {
+      trigger: card,
+      start: "top bottom",
+      toggleActions: "play none none reverse"
+    },
+    y: 50,
+    opacity: 0,
+    duration: 0.8,
+    delay: i * 0.2
+  });
+});
+        // Показываем все блоки сразу при загрузке страницы
+        window.onload = function() {
+            const blocks = document.querySelectorAll('.block');
+            blocks.forEach(block => {
+                block.classList.add('show');
             });
-        }
-
-        function drawLines(p) {
-            if (!p.active) return;
-            for (var i in p.closest) {
-                ctx.beginPath();
-                ctx.moveTo(p.x, p.y);
-                ctx.lineTo(p.closest[i].x, p.closest[i].y);
-                ctx.strokeStyle = 'rgba(255,255,255,' + p.active + ')';
-                ctx.stroke();
-            }
-        }
-
-        function Circle(pos, rad, color) {
-            var _this = this;
-
-            (function () {
-                _this.pos = pos || null;
-                _this.radius = rad || null;
-                _this.color = color || null;
-            })();
-
-            this.draw = function () {
-                if (!_this.active) return;
-                ctx.beginPath();
-                ctx.arc(_this.pos.x, _this.pos.y, _this.radius, 0, 2 * Math.PI, false);
-                ctx.fillStyle = 'rgba(255,255,255,' + _this.active + ')';
-                ctx.fill();
-            };
-        }
-
-        function getDistance(p1, p2) {
-            return Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2);
-        }
-    })();
-
+        };
     </script>
-
 </body>
 </html>
